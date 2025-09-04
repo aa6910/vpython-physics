@@ -1,0 +1,70 @@
+gc = gcurve(color=color.red)
+gv = gcurve(color=color.blue)
+gb = gcurve(color=color.cyan)
+
+
+def force(p1,p2,r0,e):
+    rvec = p1.pos - p2.pos
+    rmag = mag(rvec)
+    if rmag < 1e-10:  # small threshold to avoid division by zero
+        return vector(0,0,0)
+    rhat = hat(rvec)
+    forcemag = 4*e*(-13*((r0**12)/(rmag**13) + 7*((r0**6)/(rmag**7))))
+    forcevec = -rhat*forcemag
+    return forcevec
+    
+side1 = box(size = vector(0.1,10,1), pos = vector(-5,0,0))
+side2 = box(size = vector(0.1,10,1), pos = vector(5,0,0))
+side3 = box(size = vector(10,0.1,1), pos = vector(0,5,0))
+side4 = box(size = vector(10,0.1,1), pos = vector(0,-5,0))
+
+def random_between(xmin,xmax):
+    return random()*(xmax-xmin) + xmin
+
+atoms = []
+for i in range(0,100):
+    x = random_between(side1.pos.x,side2.pos.x)
+    y = random_between(side3.pos.y,side4.pos.y)
+    r = vector(x,y,0)
+    vx = random_between(-1,1)
+    vy = random_between(-1,1)
+    v = vector(vx,vy,0)
+    a = sphere(pos=r,color=color.blue,radius=0.2,mass = 4,velocity = v)
+    atoms.append(a)
+  
+cor = 1
+q = -1
+t = 0
+dt = 0.002
+m = 4
+r0 = 2.65
+e = 0.00057
+
+
+
+while q == -1:
+    rate(20000)
+    for a in atoms:
+        for b in atoms:
+            distance = mag(a.pos-b.pos)
+            min_distance = a.radius+b.radius
+            if (a!=b and distance<=min_distance):
+        # Change velocities based on collision.
+                vtemp = a.velocity - b.velocity
+                rtemp = a.pos - b.pos
+                v = b.velocity - (dot(vtemp,rtemp))*(rtemp)/((mag(rtemp))**2)
+                u = a.velocity - (dot(vtemp,rtemp))*(rtemp)/((mag(rtemp))**2)
+                t +=dt
+        if a.pos.x != side1.pos.x or a.pos.x != side2.pos.x or a.pos.y != side3.pos.y or a.pos.y != side4.pos.y:
+            ac = (1/m) * force(a,b,r0,e)
+            r = r + v*dt + 0.5*ac*(dt**2)
+            ac_new = (1/m) * force(a,b,r0,e)
+            v = v + 0.5 * (ac + ac_new) * dt
+            a.velocity = v
+            a.pos = r
+            t += dt
+        else:
+            v = -v
+            r = r + v*dt + 0.5*ac*(dt**2)
+            a.pos = r
+            t +=dt
