@@ -1,0 +1,28 @@
+from math import sqrt, exp, factorial
+import random
+import matplotlib.pyplot as plt
+import vpython
+from vpython import *
+import numpy as np
+
+gc = gcurve(color=color.cyan)
+gr = gcurve(color=color.red)
+
+p = [-1,1]
+X = 0
+Xnew = 0
+d = 0
+n = 1
+t = 0
+
+for j in range(1000):
+    for i in range(n):
+        x = np.random.choice(p)
+        X += x
+        d += X**2
+    d = d/1000
+    d = sqrt(d)
+    n += 1
+    plt.plot(d, t, marker="o", markersize=2, color="red",linestyle="None")
+    t += 1
+plt.show(
