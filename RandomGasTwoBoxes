@@ -1,0 +1,41 @@
+from math import sqrt, exp, factorial
+import random
+import matplotlib.pyplot as plt
+import vpython
+from vpython import *
+import numpy as np
+
+gc = gcurve(color=color.cyan)
+gr = gcurve(color=color.red)
+
+
+#side1 = box(size = vector(0.1,10,1), pos = vector(-5,0,0))
+#side2 = box(size = vector(0.1,10,1), pos = vector(5,0,0))
+#side3 = box(size = vector(10,0.1,1), pos = vector(0,5,0))
+#side4 = box(size = vector(10,0.1,1), pos = vector(0,-5,0))
+
+#box1 = compound([side1,side2,side3,side4],pos=vector(5,0,0))
+#box2 = box1.clone(pos=vector(-5,0,0))
+#box3 = box(pos=vector(0,0,0),size=vector(1,1,1),opacity=0)
+
+n = 100
+t = 0
+nLeft = []
+nRight = []
+for i in range(n):
+    nLeft.append(i)
+
+while True:
+    total = np.concatenate((nLeft, nRight))
+    x = len(nLeft)
+    z = len(total)
+    gc.plot(t,x)
+    gr.plot(t,z)
+    y = np.random.choice(total)
+    if y in nLeft:
+        nLeft.remove(y)
+        nRight.append(y)
+    elif y in nRight:
+        nRight.remove(y)
+        nLeft.append(y)
+    t += 1
